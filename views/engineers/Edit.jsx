@@ -1,28 +1,43 @@
 const React = require('react')
+const Layout = require('../layouts/Layout')
 
-function Edit({ engineer }) {
-  return (
-    <div>
-      <h1>Edit Engineer</h1>
-      <form method="POST" action={`/engineers/${engineer._id}?_method=PUT`}>
-        <label>Name: </label>
-        <input type="text" name="name" defaultValue={engineer.name} required /><br />
+function Edit (props) {
+    const { _id, name, specialty, yearsExperience, available } = props.engineer
 
-        <label>Specialty: </label>
-        <input type="text" name="specialty" defaultValue={engineer.specialty} required /><br />
+    return (
+        <Layout engineer={props.engineer}>
+            <h1>✏️ Edit {name}</h1>
 
-        <label>Years of Experience: </label>
-        <input type="number" name="yearsExperience" defaultValue={engineer.yearsExperience} /><br />
+            <form action={`/engineers/${_id}?_method=PUT&token=${props.token}`} method="POST">
+                <div className="form-group">
+                    <label htmlFor="name">Name:</label>
+                    <input type="text" id="name" name="name" required defaultValue={name} />
+                </div>
 
-        <label>Available: </label>
-        <input type="checkbox" name="available" defaultChecked={engineer.available} /><br />
+                <div className="form-group">
+                    <label htmlFor="specialty">Specialty:</label>
+                    <input type="text" id="specialty" name="specialty" required defaultValue={specialty} />
+                </div>
 
-        <button type="submit">Update Engineer</button>
-      </form>
-      <br />
-      <a href="/engineers">← Back to List</a>
-    </div>
-  )
+                <div className="form-group">
+                    <label htmlFor="yearsExperience">Years of Experience:</label>
+                    <input type="number" id="yearsExperience" name="yearsExperience" defaultValue={yearsExperience} />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="available">
+                        <input type="checkbox" id="available" name="available" defaultChecked={available} />
+                        Available for Projects
+                    </label>
+                </div>
+
+                <div className="d-flex gap-2">
+                    <button type="submit" className="btn btn-primary">💾 Update Engineer</button>
+                    <a href={`/engineers/${_id}?token=${props.token}`} className="btn btn-secondary">← Back to {name}</a>
+                </div>
+            </form>
+        </Layout>
+    )
 }
 
 module.exports = Edit

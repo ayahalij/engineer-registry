@@ -1,18 +1,30 @@
 const React = require('react')
+const Layout = require('../layouts/Layout')
 
-function Show({ engineer }) {
-  return (
-    <div>
-      <h1>Engineer Details</h1>
-      <p><strong>Name:</strong> {engineer.name}</p>
-      <p><strong>Specialty:</strong> {engineer.specialty}</p>
-      <p><strong>Years of Experience:</strong> {engineer.yearsExperience}</p>
-      <p><strong>Available:</strong> {engineer.available ? 'Yes' : 'No'}</p>
+function Show (props) {
+    const { engineer, token } = props
+    return (
+        <Layout engineer={engineer}>
+            <h1>👷 {engineer.name}</h1>
 
-      <a href={`/engineers/${engineer._id}/edit`}>✏️ Edit</a><br />
-      <a href="/engineers">← Back to List</a>
-    </div>
-  )
+            <div className="engineer-card">
+                <div><strong>Specialty:</strong> {engineer.specialty}</div>
+                <div><strong>Experience:</strong> {engineer.yearsExperience} years</div>
+                <div className={`engineer-status ${engineer.available ? 'ready' : 'not-ready'}`}>
+                    {engineer.available ? '✅ Available' : '❌ Not Available'}
+                </div>
+
+                <div className="mt-3 mb-3">
+                    <a href={`/engineers?token=${token}`} className="btn btn-secondary">← Back to All Engineers</a>
+                    <a href={`/engineers/${engineer._id}/edit?token=${token}`} className="btn btn-primary">✏️ Edit Engineer</a>
+                </div>
+
+                <form action={`/engineers/${engineer._id}?_method=DELETE&token=${token}`} method="POST">
+                    <button type="submit" className="btn btn-danger">🗑️ Delete Engineer</button>
+                </form>
+            </div>
+        </Layout>
+    )
 }
 
 module.exports = Show

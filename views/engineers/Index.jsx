@@ -1,23 +1,44 @@
 const React = require('react')
+const Layout = require('../layouts/Layout')
 
-function Index({ engineers }) {
-  return (
-    <div>
-      <h1>Engineer Registry</h1>
-      <a href="/engineers/new">➕ Add New Engineer</a>
-      <ul>
-        {engineers.map((engineer, i) => (
-          <li key={i}>
-            <a href={`/engineers/${engineer._id}`}>{engineer.name}</a> | 
-            <a href={`/engineers/${engineer._id}/edit`}> ✏️ Edit</a> | 
-            <form method="POST" action={`/engineers/${engineer._id}?_method=DELETE`} style={{ display: 'inline' }}>
-              <button type="submit">🗑️ Delete</button>
-            </form>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
+function Index (props) {
+    const engineers = props.engineers
+
+    return (
+        <Layout>
+            <h1>All Engineers 👷🏻‍♂️</h1>
+
+            <div className="d-flex justify-between align-center mb-3">
+                <h2>Engineer Collection</h2>
+                <a href={`/engineers/new?token=${props.token}`} className="btn btn-primary">Add Engineer ➕</a>
+            </div>
+
+            {engineers.length === 0 ? (
+                <div className="text-center">
+                    <p>No engineers yet. Add your first engineer!</p>
+                    <a href={`/engineers/new?token=${props.token}`} className="btn btn-primary">Create One</a>
+                </div>
+            ) : (
+                <div className="engineers-grid">
+                    {engineers.map((engineer) => (
+                        <div key={engineer._id} className="engineer-card">
+                            <div><strong>{engineer.name}</strong></div>
+                            <div>Specialty: {engineer.specialty}</div>
+                            <div>Experience: {engineer.yearsExperience} years</div>
+                            <div className={`engineer-status ${engineer.available ? 'ready' : 'not-ready'}`}>
+                                {engineer.available ? '✅ Available' : '❌ Not Available'}
+                            </div>
+
+                            <div className="d-flex gap-2">
+                                <a href={`/engineers/${engineer._id}?token=${props.token}`} className="btn btn-secondary">👁️ View</a>
+                                <a href={`/engineers/${engineer._id}/edit?token=${props.token}`} className="btn btn-primary">✏️ Edit</a>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </Layout>
+    )
 }
 
 module.exports = Index

@@ -1,23 +1,30 @@
 const express = require('express')
-const methodOverride = require('method-override')
-const engineerRoutes = require('./controllers/engineerRoutes')
-const jsxViewEngine = require('jsx-view-engine')
 const morgan = require('morgan')
-
+const jsxEngine = require('jsx-view-engine')
+const methodOverride = require('method-override')
+const userRoutes = require('./controllers/auth/routeController')
+const engineersRouter = require('./controllers/engineers/routeController')
+const apiRoutes = require('./routes/apiRoutes')
 const app = express()
 
 app.set('view engine', 'jsx')
-app.engine('jsx', jsxViewEngine())
+app.engine('jsx', jsxEngine())
 
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(methodOverride('_method'))
+app.use(express.json()) // this is new this for the api
+app.use(express.urlencoded({ extended: true })) // req.body
+app.use(methodOverride('_method')) // <====== add method override
+app.use((req, res, next) => {
+    res.locals.data = {}
+    next()
+})
+app.use(express.static('public'))
 app.use(morgan('dev'))
 
-app.use('/engineers', engineerRoutes)
+// Web routes (for views)
+app.use('/users', userRoutes)
+app.use('/engineers', engineersRouter)
 
-app.get('/', (req, res) => {
-  res.redirect('/engineers')
-})
+// API routes (for JSON responses)
+app.use('/api', apiRoutes)
 
 module.exports = app
